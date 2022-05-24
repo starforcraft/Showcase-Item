@@ -1,0 +1,26 @@
+modLoader="javafml"
+loaderVersion="[36,)"
+license="Attribution-NonCommercial-ShareAlike 3.0 Unported"
+issueTrackerURL="https://github.com/starforcraft/Showcase-Item/issues/new/choose"
+[[mods]]
+modId="showcaseitem"
+version="${file.jarVersion}"
+displayName="Showcase Item"
+logoFile="examplemod.png"
+credits="Thanks for downloading this mod."
+authors="YTrollman"
+description="This mod allows to showcase items in the chat"
+
+[[dependencies.showcaseitem]]
+modId="forge"
+mandatory=true
+versionRange="[36.1.0,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.showcaseitem]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.16.5,)"
+ordering="NONE"
+side="BOTH"

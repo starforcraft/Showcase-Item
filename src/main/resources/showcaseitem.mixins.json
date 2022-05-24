@@ -1,0 +1,16 @@
+{
+	"required": true,
+	"package": "com.Ultramega.ShowcaseItem.mixin",
+	"compatibilityLevel": "JAVA_8",
+	"refmap": "showcaseitem.refmap.json",
+	"mixins": [
+		"ItemStackMixin"
+	],
+	"client": [
+		"client.ItemRendererMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"minVersion": "0.8"
+}
