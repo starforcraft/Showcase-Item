@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'https://maven.minecraftforge.net' }
         maven { url = 'https://repo.spongepowered.org/maven' }
         mavenCentral()
     }
@@ -10,43 +10,39 @@ buildscript {
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'java'
 apply plugin: 'eclipse'
-apply plugin: 'idea'
 apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
 repositories {
-    maven {
-        name = "Progwml6 maven"
-        url = "https://dvs1.progwml6.com/files/maven/"
-    }
+  	maven {
+    	name = "Progwml6 maven"
+    	url = "https://dvs1.progwml6.com/files/maven/"
+  	}
     maven {
         url "https://www.cursemaven.com"
     }
 }
 
 version = "${mod_version}"
-group = "com.Ultramega.ShowcaseItem"
+group = 'com.Ultramega.ShowcaseItem'
 archivesBaseName = "${modid}"
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
     mappings channel: "official", version: "${mc_version}"
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
     runs {
         client {
             workingDirectory project.file('run')
             arg "-mixin.config=showcaseitem.mixins.json"
 
-            property 'forge.logging.markers', 'REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
 
             mods {
                 showcaseitem {
@@ -59,11 +55,8 @@ minecraft {
             workingDirectory project.file('run')
             arg "-mixin.config=showcaseitem.mixins.json"
 
-            property 'forge.logging.markers', 'REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
 
             mods {
                 showcaseitem {
@@ -76,12 +69,8 @@ minecraft {
             workingDirectory project.file('run')
             arg "-mixin.config=showcaseitem.mixins.json"
 
-            property 'forge.logging.markers', 'REGISTRIES,REGISTRYDUMP'
-
+            property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
 
             args '--mod', 'showcaseitem', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
@@ -103,8 +92,8 @@ mixin {
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-    compileOnly fg.deobf("mezz.jei:jei-1.16.4:${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
@@ -112,12 +101,12 @@ dependencies {
 jar {
     manifest {
         attributes([
-                "Specification-Title": "showcaseitem",
-                "Specification-Vendor": "showcaseitemsareus",
-                "Specification-Version": "1",
-                "Implementation-Title": project.name,
-                "Implementation-Version": "${version}",
-                "Implementation-Vendor" :"showcaseitemsareus",
+                "Specification-Title"     : "showcaseitem",
+                "Specification-Vendor"    : "showcaseitemsareus",
+                "Specification-Version"   : "1",
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : project.jar.archiveVersion,
+                "Implementation-Vendor"   : "showcaseitemsareus",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 "MixinConfigs": "${modid}.mixins.json"
         ])
@@ -125,3 +114,15 @@ jar {
 }
 
 jar.finalizedBy('reobfJar')
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/mcmodsrepo"
+        }
+    }
+}

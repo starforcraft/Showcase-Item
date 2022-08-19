@@ -1,28 +1,24 @@
 package com.Ultramega.ShowcaseItem.network;
 
-import java.util.function.Supplier;
-
 import com.Ultramega.ShowcaseItem.ShowcaseItemFeature;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.network.NetworkEvent;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import java.util.function.Supplier;
 
 public class LinkItemMessage {
 	public ItemStack stack;
-
-	public LinkItemMessage() {
-	}
 
 	public LinkItemMessage(ItemStack stack) {
 		this.stack = stack;
 	}
 
-	public static void encode(LinkItemMessage message, PacketBuffer buffer) {
+	public static void encode(LinkItemMessage message, FriendlyByteBuf buffer) {
 		buffer.writeItem(message.stack);
 	}
 
-	public static LinkItemMessage decode(PacketBuffer buffer) {
+	public static LinkItemMessage decode(FriendlyByteBuf buffer) {
 		return new LinkItemMessage(buffer.readItem());
 	}
 

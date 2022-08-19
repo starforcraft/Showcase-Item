@@ -1,10 +1,9 @@
 package com.Ultramega.ShowcaseItem.network;
 
 import com.Ultramega.ShowcaseItem.ShowcaseItem;
-
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
 
 public class ModNetworkHandler {
 	public static final String protocolVersion = Integer.toString(1);

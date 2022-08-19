@@ -2,31 +2,31 @@ package com.Ultramega.ShowcaseItem;
 
 import com.Ultramega.ShowcaseItem.config.ShowcaseItemConfig;
 import com.Ultramega.ShowcaseItem.network.LinkItemMessage;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.block.Blocks;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.GuiMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ChatLine;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.IngameGui;
-import net.minecraft.client.gui.NewChatGui;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.util.InputMappings;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.ServerPlayNetHandler;
-import net.minecraft.server.management.PlayerList;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.*;
-import net.minecraft.util.text.event.HoverEvent;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.*;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.server.players.PlayerList;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientChatEvent;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ServerChatEvent;
@@ -42,15 +42,15 @@ public class ShowcaseItemFeature {
 
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
-	public static void keyboardEvent(GuiScreenEvent.KeyboardKeyPressedEvent.Pre event) {
+	public static void keyboardEvent(ScreenEvent.KeyboardKeyPressedEvent.Pre event) {
 		Minecraft mc = Minecraft.getInstance();
-		if (InputMappings.isKeyDown(mc.getWindow().getWindow(), ModKeyBindings.SHOWCASE_ITEM.getKey().getValue()) && keyModifierPressed(mc) && event.getGui() instanceof ContainerScreen) {
-			ContainerScreen<?> gui = (ContainerScreen<?>) event.getGui();
+		if (InputConstants.isKeyDown(mc.getWindow().getWindow(), ModKeyBindings.SHOWCASE_ITEM.getKey().getValue()) && keyModifierPressed(mc) && event.getScreen() instanceof AbstractContainerScreen) {
+			AbstractContainerScreen<?> gui = (AbstractContainerScreen<?>) event.getScreen();
 
-			List<? extends IGuiEventListener> children = gui.children();
-			for (IGuiEventListener c : children)
-				if (c instanceof TextFieldWidget) {
-					TextFieldWidget tf = (TextFieldWidget) c;
+			List<? extends GuiEventListener> children = gui.children();
+			for (GuiEventListener c : children)
+				if (c instanceof EditBox) {
+					EditBox tf = (EditBox) c;
 					if (tf.isFocused())
 						return;
 				}
@@ -71,9 +71,9 @@ public class ShowcaseItemFeature {
 		int keyModifierInt = checkLeftKeyModifier();
 		int keyModifierInt2 = checkRightKeyModifier();
 		if(keyModifierInt != 0)
-			return InputMappings.isKeyDown(mc.getWindow().getWindow(), keyModifierInt);
+			return InputConstants.isKeyDown(mc.getWindow().getWindow(), keyModifierInt);
 		else if(keyModifierInt2 != 0)
-			return InputMappings.isKeyDown(mc.getWindow().getWindow(), keyModifierInt2);
+			return InputConstants.isKeyDown(mc.getWindow().getWindow(), keyModifierInt2);
 		else
 			return false;
 	}
@@ -103,30 +103,30 @@ public class ShowcaseItemFeature {
 		return keyModifierInt;
 	}
 
-	public static void linkItem(PlayerEntity player, ItemStack item) {
-		if (!item.isEmpty() && player instanceof ServerPlayerEntity) {
-			ITextComponent comp = item.getDisplayName();
-			ITextComponent fullComp = new TranslationTextComponent("chat.type.text", player.getDisplayName(), comp);
+	public static void linkItem(Player player, ItemStack item) {
+		if (!item.isEmpty() && player instanceof ServerPlayer) {
+			Component comp = item.getDisplayName();
+			Component fullComp = new TranslatableComponent("chat.type.text", player.getDisplayName(), comp);
 
-			PlayerList players = ((ServerPlayerEntity) player).server.getPlayerList();
+			PlayerList players = ((ServerPlayer) player).server.getPlayerList();
 
-			ServerChatEvent event = new ServerChatEvent((ServerPlayerEntity) player, comp.getString(), fullComp);
+			ServerChatEvent event = new ServerChatEvent((ServerPlayer) player, comp.getString(), fullComp);
 			if (!MinecraftForge.EVENT_BUS.post(event)) {
 				players.broadcastMessage(fullComp, ChatType.CHAT, player.getUUID());
 
-				ServerPlayNetHandler handler = ((ServerPlayerEntity) player).connection;
+				ServerGamePacketListenerImpl handler = ((ServerPlayer) player).connection;
 				int threshold = handler.chatSpamTickCount;
 				threshold += 20;
 
 				if (threshold > 200 && !players.isOp(player.getGameProfile()))
-					handler.onDisconnect(new TranslationTextComponent("disconnect.spam"));
+					handler.onDisconnect(new TranslatableComponent("disconnect.spam"));
 
 				handler.chatSpamTickCount = threshold;
 			}
 		}
 	}
 
-	public static IFormattableTextComponent createStackComponent(ItemStack stack, IFormattableTextComponent component) {
+	public static MutableComponent createStackComponent(ItemStack stack, MutableComponent component) {
 		if (!ShowcaseItemConfig.RENDER_ITEMS_IN_CHAT.get())
 			return component;
 
@@ -134,11 +134,11 @@ public class ShowcaseItemFeature {
 		if (stack.getCount() > 64) {
 			ItemStack copyStack = stack.copy();
 			copyStack.setCount(64);
-			style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new HoverEvent.ItemHover(copyStack)));
+			style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new HoverEvent.ItemStackInfo(copyStack)));
 			component.withStyle(style);
 		}
 
-		IFormattableTextComponent out = new StringTextComponent("   ");
+		MutableComponent out = new TextComponent("   ");
 		out.setStyle(style);
 		return out.append(component);
 	}
@@ -157,27 +157,26 @@ public class ShowcaseItemFeature {
 			return;
 
 		Minecraft mc = Minecraft.getInstance();
-		IngameGui gameGui = mc.gui;
-		NewChatGui chatGui = gameGui.getChat();
+		Gui gameGui = mc.gui;
+		ChatComponent chatGui = gameGui.getChat();
 		if (event.getType() == RenderGameOverlayEvent.ElementType.CHAT) {
 			int updateCounter = gameGui.getGuiTicks();
-			List<ChatLine<IReorderingProcessor>> lines = chatGui.trimmedMessages;
+			List<GuiMessage<FormattedCharSequence>> lines = chatGui.trimmedMessages;
 			int shift = chatGui.chatScrollbarPos;
 
 			int idx = shift;
 
 			while (idx < lines.size() && (idx - shift) < chatGui.getLinesPerPage()) {
-				ChatLine<IReorderingProcessor> line = lines.get(idx);
+				GuiMessage<FormattedCharSequence> line = lines.get(idx);
 				StringBuilder before = new StringBuilder();
 
-				IReorderingProcessor lineProperties = line.getMessage();
+				FormattedCharSequence lineProperties = line.getMessage();
 
 				int captureIndex = idx;
 				lineProperties.accept((counter_, style, character) -> {
 					String sofar = before.toString();
 					if (sofar.endsWith("    ")) {
-						render(mc, chatGui, updateCounter, sofar.substring(0, sofar.length() - 3), line,
-								captureIndex - shift, style);
+						render(mc, chatGui, updateCounter, sofar.substring(0, sofar.length() - 3), line, captureIndex - shift, style);
 						return false;
 					}
 					before.append((char) character);
@@ -189,13 +188,13 @@ public class ShowcaseItemFeature {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
+	@Deprecated
 	@OnlyIn(Dist.CLIENT)
-	private static void render(Minecraft mc, NewChatGui chatGui, int updateCounter, String before, ChatLine<IReorderingProcessor> line, int lineHeight, Style style) {
+	private static void render(Minecraft mc, ChatComponent chatGui, int updateCounter, String before, GuiMessage<FormattedCharSequence> line, int lineHeight, Style style) {
 		HoverEvent hoverEvent = style.getHoverEvent();
 
 		if (hoverEvent != null && hoverEvent.getAction() == HoverEvent.Action.SHOW_ITEM) {
-			HoverEvent.ItemHover contents = hoverEvent.getValue(HoverEvent.Action.SHOW_ITEM);
+			HoverEvent.ItemStackInfo contents = hoverEvent.getValue(HoverEvent.Action.SHOW_ITEM);
 
 			ItemStack stack = contents != null ? contents.getItemStack() : ItemStack.EMPTY;
 
@@ -208,7 +207,7 @@ public class ShowcaseItemFeature {
 
 			if (timeSinceCreation < 200) {
 				float chatOpacity = (float) mc.options.chatOpacity * 0.9f + 0.1f;
-				float fadeOut = MathHelper.clamp((1 - timeSinceCreation / 200f) * 10, 0, 1);
+				float fadeOut = Mth.clamp((1 - timeSinceCreation / 200f) * 10, 0, 1);
 				float alpha = fadeOut * fadeOut * chatOpacity;
 
 				int x = chatX + 3 + mc.font.width(before);
@@ -217,11 +216,15 @@ public class ShowcaseItemFeature {
 				if (alpha > 0) {
 					alphaValue = alpha;
 
-					RenderSystem.pushMatrix();
-					RenderSystem.translatef(x - 2, y - 2, -2);
-					RenderSystem.scalef(0.65f, 0.65f, 0.65f);
+					PoseStack modelviewPose = RenderSystem.getModelViewStack();
+
+					modelviewPose.pushPose();
+					modelviewPose.translate(x - 2, y - 2, 0);
+					modelviewPose.scale(0.65f, 0.65f, 0.65f);
 					mc.getItemRenderer().renderGuiItem(stack, 0, 0);
-					RenderSystem.popMatrix();
+					modelviewPose.popPose();
+
+					RenderSystem.applyModelViewMatrix();
 
 					alphaValue = 1F;
 				}
