@@ -7,7 +7,9 @@
 		"ItemStackMixin"
 	],
 	"client": [
-		"client.ItemRendererMixin"
+		"client.ItemRendererMixin",
+		"client.ChatComponentMixin",
+		"client.ItemBlockRenderTypesMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

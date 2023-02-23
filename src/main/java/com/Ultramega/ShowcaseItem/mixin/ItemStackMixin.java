@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ItemStack.class)
 public class ItemStackMixin {
 
-	@Inject(method = "getDisplayName()Lnet/minecraft/network/chat/Component;", at = @At("RETURN"), cancellable = true)
-	private void createStackComponent(CallbackInfoReturnable<Component> callbackInfoReturnable) {
+	@Inject(method = "getDisplayName", at = @At("RETURN"), cancellable = true)
+	private void getHoverName(CallbackInfoReturnable<Component> callbackInfoReturnable) {
 		callbackInfoReturnable.setReturnValue(ShowcaseItemFeature.createStackComponent((ItemStack) (Object) this, (MutableComponent) callbackInfoReturnable.getReturnValue()));
 	}
 }

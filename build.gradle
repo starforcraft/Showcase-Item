@@ -1,36 +1,36 @@
 buildscript {
     repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
         maven { url = 'https://repo.spongepowered.org/maven' }
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
     }
 }
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
+
+plugins {
+    id "net.minecraftforge.gradle" version "5.1.+"
+    id 'eclipse'
+    id 'maven-publish'
+}
+
 apply plugin: 'org.spongepowered.mixin'
+
+version = "${mod_version}"
+group = 'com.Ultramega.ShowcaseItem'
+archivesBaseName = "${modid}"
 
 repositories {
   	maven {
     	name = "Progwml6 maven"
     	url = "https://dvs1.progwml6.com/files/maven/"
   	}
-    maven {
-        url "https://www.cursemaven.com"
-    }
+    mavenCentral()
 }
-
-version = "${mod_version}"
-group = 'com.Ultramega.ShowcaseItem'
-archivesBaseName = "${modid}"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
     mappings channel: "official", version: "${mc_version}"
 
@@ -92,9 +92,6 @@ mixin {
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-    compileOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}")
-
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
@@ -114,15 +111,7 @@ jar {
 }
 
 jar.finalizedBy('reobfJar')
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file://${project.projectDir}/mcmodsrepo"
-        }
-    }
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
 }
