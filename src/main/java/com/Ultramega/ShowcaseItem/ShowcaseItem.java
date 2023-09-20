@@ -1,7 +1,7 @@
-package com.Ultramega.ShowcaseItem;
+package com.ultramega.showcaseitem;
 
-import com.Ultramega.ShowcaseItem.config.Config;
-import com.Ultramega.ShowcaseItem.message.ShowcaseItemNetwork;
+import com.ultramega.showcaseitem.config.Config;
+import com.ultramega.showcaseitem.message.ShowcaseItemNetwork;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;

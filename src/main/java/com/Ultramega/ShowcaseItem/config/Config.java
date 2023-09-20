@@ -1,8 +1,8 @@
-package com.Ultramega.ShowcaseItem.config;
+package com.ultramega.showcaseitem.config;
 
 import java.io.File;
 
-import com.Ultramega.ShowcaseItem.ShowcaseItem;
+import com.ultramega.showcaseitem.ShowcaseItem;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 

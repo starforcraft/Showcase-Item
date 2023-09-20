@@ -1,9 +1,11 @@
 buildscript {
     repositories {
+        maven { url = 'https://maven.parchmentmc.org' }
         maven { url = 'https://repo.spongepowered.org/maven' }
         mavenCentral()
     }
     dependencies {
+        classpath 'org.parchmentmc:librarian:1.+'
         classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
     }
 }
@@ -13,11 +15,11 @@ plugins {
     id 'eclipse'
     id 'maven-publish'
 }
-
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
 
 version = "${mod_version}"
-group = 'com.Ultramega.ShowcaseItem'
+group = 'com.ultramega.showcaseitem'
 archivesBaseName = "${modid}"
 
 repositories {
@@ -28,7 +30,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
-    mappings channel: "official", version: "${mc_version}"
+    mappings channel: 'parchment', version: "2023.07.16-1.20.1"
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 

@@ -1,6 +1,6 @@
-package com.Ultramega.ShowcaseItem.mixin.client;
+package com.ultramega.showcaseitem.mixin.client;
 
-import com.Ultramega.ShowcaseItem.ShowcaseItemFeature;
+import com.ultramega.showcaseitem.ShowcaseItemFeature;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.color.item.ItemColors;

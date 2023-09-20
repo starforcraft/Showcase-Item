@@ -1,4 +1,4 @@
-package com.Ultramega.ShowcaseItem;
+package com.ultramega.showcaseitem;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;

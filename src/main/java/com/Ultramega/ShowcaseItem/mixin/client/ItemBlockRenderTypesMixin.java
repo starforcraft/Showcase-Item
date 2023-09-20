@@ -1,6 +1,6 @@
-package com.Ultramega.ShowcaseItem.mixin.client;
+package com.ultramega.showcaseitem.mixin.client;
 
-import com.Ultramega.ShowcaseItem.ShowcaseItemFeature;
+import com.ultramega.showcaseitem.ShowcaseItemFeature;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;

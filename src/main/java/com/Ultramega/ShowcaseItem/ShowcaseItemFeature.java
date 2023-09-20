@@ -1,16 +1,21 @@
-package com.Ultramega.ShowcaseItem;
+package com.ultramega.showcaseitem;
 
-import com.Ultramega.ShowcaseItem.config.ShowcaseItemConfig;
-import com.Ultramega.ShowcaseItem.message.ShareItemMessage;
-import com.Ultramega.ShowcaseItem.message.ShowcaseItemNetwork;
+import com.mojang.blaze3d.platform.Lighting;
+import com.ultramega.showcaseitem.config.ShowcaseItemConfig;
+import com.ultramega.showcaseitem.message.ShareItemMessage;
+import com.ultramega.showcaseitem.message.ShowcaseItemNetwork;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
@@ -18,6 +23,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
@@ -26,6 +32,7 @@ import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.joml.Matrix4f;
 
 import java.util.List;
 
@@ -36,7 +43,7 @@ public class ShowcaseItemFeature {
 	private static long lastShadeTimestamp = -1;
 
 	@OnlyIn(Dist.CLIENT)
-	public static void renderItemForMessage(PoseStack poseStack, FormattedCharSequence sequence, float x, float y, int color) {
+	public static void renderItemForMessage(GuiGraphics guiGraphics, FormattedCharSequence sequence, float x, float y, int color) {
 		if (!ShowcaseItemConfig.RENDER_ITEMS_IN_CHAT.get())
 			return;
 
@@ -47,7 +54,7 @@ public class ShowcaseItemFeature {
 		sequence.accept((counter_, style, character) -> {
 			String sofar = before.toString();
 			if (sofar.endsWith("    ")) {
-				render(mc, poseStack, sofar.substring(0, sofar.length() - 3), x, y, style, color);
+				render(mc, guiGraphics, sofar.substring(0, sofar.length() - 3), x, y, style, color);
 				return false;
 			}
 			before.append((char) character);
@@ -126,7 +133,7 @@ public class ShowcaseItemFeature {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	private static void render(Minecraft mc, PoseStack pose, String before, float x, float y, Style style, int color) {
+	private static void render(Minecraft mc, GuiGraphics guiGraphics, String before, float x, float y, Style style, int color) {
 		float a = (color >> 24 & 255) / 255.0F;
 
 		HoverEvent hoverEvent = style.getHoverEvent();
@@ -136,25 +143,21 @@ public class ShowcaseItemFeature {
 			ItemStack stack = contents != null ? contents.getItemStack() : ItemStack.EMPTY;
 
 			if (stack.isEmpty())
-				stack = new ItemStack(Blocks.BARRIER); // for invalid icon
+				stack = new ItemStack(Blocks.BARRIER); //For invalid icon
 
 			int shift = mc.font.width(before);
 
 			if (a > 0) {
 				alphaValue = a;
 
-				PoseStack poseStack = RenderSystem.getModelViewStack();
+				guiGraphics.pose().pushPose();
 
-				poseStack.pushPose();
+				guiGraphics.pose().mulPoseMatrix(guiGraphics.pose().last().pose());
 
-				poseStack.mulPoseMatrix(pose.last().pose());
-
-				poseStack.translate(shift + x, y, 0);
-				poseStack.scale(0.5f, 0.5f, 0.5f);
-				mc.getItemRenderer().renderGuiItem(pose, stack, 0, 0);
-				poseStack.popPose();
-
-				RenderSystem.applyModelViewMatrix();
+				guiGraphics.pose().translate(shift + x - 3, y, 0);
+				guiGraphics.pose().scale(0.5f, 0.5f, 0.5f);
+				guiGraphics.renderFakeItem(stack, 0, 0);
+				guiGraphics.pose().popPose();
 
 				alphaValue = 1F;
 			}

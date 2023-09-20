@@ -1,6 +1,6 @@
-package com.Ultramega.ShowcaseItem.message;
+package com.ultramega.showcaseitem.message;
 
-import com.Ultramega.ShowcaseItem.ShowcaseItemFeature;
+import com.ultramega.showcaseitem.ShowcaseItemFeature;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent.Context;
 

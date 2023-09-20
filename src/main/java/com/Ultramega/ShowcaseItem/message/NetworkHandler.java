@@ -6,7 +6,7 @@
  * Psi is Open Source and distributed under the
  * Psi License: http://psi.vazkii.us/license.php
  */
-package com.Ultramega.ShowcaseItem.message;
+package com.ultramega.showcaseitem.message;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;

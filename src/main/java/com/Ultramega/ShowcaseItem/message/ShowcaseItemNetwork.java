@@ -1,6 +1,6 @@
-package com.Ultramega.ShowcaseItem.message;
+package com.ultramega.showcaseitem.message;
 
-import com.Ultramega.ShowcaseItem.ShowcaseItem;
+import com.ultramega.showcaseitem.ShowcaseItem;
 import net.minecraftforge.network.NetworkDirection;
 
 public class ShowcaseItemNetwork {

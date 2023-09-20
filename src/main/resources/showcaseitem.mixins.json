@@ -1,6 +1,6 @@
 {
 	"required": true,
-	"package": "com.Ultramega.ShowcaseItem.mixin",
+	"package": "com.ultramega.showcaseitem.mixin",
 	"compatibilityLevel": "JAVA_8",
 	"refmap": "showcaseitem.refmap.json",
 	"mixins": [

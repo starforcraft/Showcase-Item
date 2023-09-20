@@ -1,4 +1,4 @@
-package com.Ultramega.ShowcaseItem.message;
+package com.ultramega.showcaseitem.message;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;

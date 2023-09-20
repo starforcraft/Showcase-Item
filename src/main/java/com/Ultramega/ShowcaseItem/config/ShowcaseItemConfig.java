@@ -1,4 +1,4 @@
-package com.Ultramega.ShowcaseItem.config;
+package com.ultramega.showcaseitem.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 
