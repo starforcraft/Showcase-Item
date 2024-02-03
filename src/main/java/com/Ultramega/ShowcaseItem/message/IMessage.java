@@ -1,9 +1,9 @@
 package com.ultramega.showcaseitem.message;
 
-import java.io.Serializable;
-
 import net.minecraftforge.network.NetworkEvent;
 
+import java.io.Serializable;
+
 public interface IMessage extends Serializable {
-    public boolean receive(NetworkEvent.Context context);
+    boolean receive(NetworkEvent.Context context);
 }

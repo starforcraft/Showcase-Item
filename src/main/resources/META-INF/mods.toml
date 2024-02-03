@@ -7,9 +7,9 @@ modId="showcaseitem"
 version="${file.jarVersion}"
 displayName="Showcase Item"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/showcase-item"
-logoFile="examplemod.png"
+logoFile="logo.png"
 credits="Thanks for downloading this mod."
-authors="YTrollman"
+authors="Ultramega"
 description="This mod allows to showcase items in the chat"
 
 [[dependencies.showcaseitem]]

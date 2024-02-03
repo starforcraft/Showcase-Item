@@ -2,7 +2,7 @@
  * This class was created by <Vazkii>. It's distributed as
  * part of the Psi Mod. Get the Source Code in github:
  * https://github.com/Vazkii/Psi
- *
+ * <p>
  * Psi is Open Source and distributed under the
  * Psi License: http://psi.vazkii.us/license.php
  */
@@ -54,7 +54,7 @@ public class NetworkHandler {
 
         BiConsumer<T, Supplier<NetworkEvent.Context>> consumer = (msg, supp) -> {
             NetworkEvent.Context context = supp.get();
-            if(context.getDirection() != dir)
+            if (context.getDirection() != dir)
                 return;
 
             context.setPacketHandled(msg.receive(context));

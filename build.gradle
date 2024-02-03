@@ -1,30 +1,27 @@
 buildscript {
     repositories {
-        maven { url = 'https://maven.parchmentmc.org' }
         maven { url = 'https://repo.spongepowered.org/maven' }
+        maven { url = 'https://maven.parchmentmc.org' }
         mavenCentral()
     }
     dependencies {
-        classpath 'org.parchmentmc:librarian:1.+'
         classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
+        classpath group: 'org.parchmentmc.librarian.forgegradle', name: 'org.parchmentmc.librarian.forgegradle.gradle.plugin', version: '1.+'
     }
 }
 
 plugins {
-    id "net.minecraftforge.gradle" version "5.1.+"
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
     id 'eclipse'
     id 'maven-publish'
 }
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
-apply plugin: 'org.spongepowered.mixin'
 
-version = "${mod_version}"
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
+
+version = '1.20.1-1.1'
 group = 'com.ultramega.showcaseitem'
 archivesBaseName = "${modid}"
-
-repositories {
-
-}
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
@@ -37,7 +34,6 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
-            arg "-mixin.config=showcaseitem.mixins.json"
 
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
@@ -51,7 +47,6 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
-            arg "-mixin.config=showcaseitem.mixins.json"
 
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
@@ -65,7 +60,6 @@ minecraft {
 
         data {
             workingDirectory project.file('run')
-            arg "-mixin.config=showcaseitem.mixins.json"
 
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
@@ -85,19 +79,39 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 mixin {
     add sourceSets.main, "${modid}.refmap.json"
+    config "${modid}.mixins.json"
 }
+
+repositories {
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+}
+
+jarJar.enable()
 
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.3.5"))
+    implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.3.5")) {
+        jarJar.ranged(it, "[0.3.5,)")
+    }
+
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    implementation fg.deobf('curse.maven:overflowingbars-852662:4613504')
+    implementation fg.deobf('curse.maven:puzzleslib-495476:5057282')
 }
 
 jar {
     manifest {
         attributes([
                 "Specification-Title"     : "showcaseitem",
-                "Specification-Vendor"    : "showcaseitemsareus",
+                "Specification-Vendor"    : "showcaseitem",
                 "Specification-Version"   : "1",
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : project.jar.archiveVersion,

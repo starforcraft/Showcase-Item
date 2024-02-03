@@ -13,7 +13,8 @@ public class ShareItemMessage implements IMessage {
     public int containerId;
     public int slot;
 
-    public ShareItemMessage() { }
+    public ShareItemMessage() {
+    }
 
     public ShareItemMessage(int slot, int containerId) {
         this.slot = slot;

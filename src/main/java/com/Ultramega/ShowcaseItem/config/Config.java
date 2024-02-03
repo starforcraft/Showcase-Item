@@ -1,13 +1,12 @@
 package com.ultramega.showcaseitem.config;
 
-import java.io.File;
-
-import com.ultramega.showcaseitem.ShowcaseItem;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
-
+import com.ultramega.showcaseitem.ShowcaseItem;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.common.Mod;
+
+import java.io.File;
 
 @Mod.EventBusSubscriber
 public class Config {

@@ -1,41 +1,36 @@
 package com.ultramega.showcaseitem.message;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.BlockHitResult;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import org.apache.commons.lang3.tuple.Pair;
-
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.network.chat.Component;
-
-@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
+@SuppressWarnings({"unchecked", "rawtypes", "unused"})
 public final class MessageSerializer {
 
     private static final HashMap<Class<?>, Pair<Reader, Writer>> handlers = new HashMap<>();
     private static final HashMap<Class<?>, Field[]> fieldCache = new HashMap<>();
 
     static {
-        MessageSerializer.<Byte> mapFunctions(byte.class, FriendlyByteBuf::readByte, FriendlyByteBuf::writeByte);
-        MessageSerializer.<Short> mapFunctions(short.class, FriendlyByteBuf::readShort, FriendlyByteBuf::writeShort);
-        MessageSerializer.<Integer> mapFunctions(int.class, FriendlyByteBuf::readInt, FriendlyByteBuf::writeInt);
-        MessageSerializer.<Long> mapFunctions(long.class, FriendlyByteBuf::readLong, FriendlyByteBuf::writeLong);
-        MessageSerializer.<Float> mapFunctions(float.class, FriendlyByteBuf::readFloat, FriendlyByteBuf::writeFloat);
-        MessageSerializer.<Double> mapFunctions(double.class, FriendlyByteBuf::readDouble, FriendlyByteBuf::writeDouble);
-        MessageSerializer.<Boolean> mapFunctions(boolean.class, FriendlyByteBuf::readBoolean, FriendlyByteBuf::writeBoolean);
-        MessageSerializer.<Character> mapFunctions(char.class, FriendlyByteBuf::readChar, FriendlyByteBuf::writeChar);
+        MessageSerializer.<Byte>mapFunctions(byte.class, FriendlyByteBuf::readByte, FriendlyByteBuf::writeByte);
+        MessageSerializer.<Short>mapFunctions(short.class, FriendlyByteBuf::readShort, FriendlyByteBuf::writeShort);
+        MessageSerializer.<Integer>mapFunctions(int.class, FriendlyByteBuf::readInt, FriendlyByteBuf::writeInt);
+        MessageSerializer.<Long>mapFunctions(long.class, FriendlyByteBuf::readLong, FriendlyByteBuf::writeLong);
+        MessageSerializer.<Float>mapFunctions(float.class, FriendlyByteBuf::readFloat, FriendlyByteBuf::writeFloat);
+        MessageSerializer.<Double>mapFunctions(double.class, FriendlyByteBuf::readDouble, FriendlyByteBuf::writeDouble);
+        MessageSerializer.<Boolean>mapFunctions(boolean.class, FriendlyByteBuf::readBoolean, FriendlyByteBuf::writeBoolean);
+        MessageSerializer.<Character>mapFunctions(char.class, FriendlyByteBuf::readChar, FriendlyByteBuf::writeChar);
 
         mapFunctions(BlockPos.class, FriendlyByteBuf::readBlockPos, FriendlyByteBuf::writeBlockPos);
         mapFunctions(Component.class, FriendlyByteBuf::readComponent, FriendlyByteBuf::writeComponent);
@@ -52,12 +47,12 @@ public final class MessageSerializer {
         try {
             Class<?> clazz = obj.getClass();
             Field[] clFields = getClassFields(clazz);
-            for(Field f : clFields) {
+            for (Field f : clFields) {
                 Class<?> type = f.getType();
-                if(acceptField(f, type))
+                if (acceptField(f, type))
                     readField(obj, f, type, buf);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException("Error at reading message " + obj, e);
         }
     }
@@ -66,18 +61,18 @@ public final class MessageSerializer {
         try {
             Class<?> clazz = obj.getClass();
             Field[] clFields = getClassFields(clazz);
-            for(Field f : clFields) {
+            for (Field f : clFields) {
                 Class<?> type = f.getType();
-                if(acceptField(f, type))
+                if (acceptField(f, type))
                     writeField(obj, f, type, buf);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException("Error at writing message " + obj, e);
         }
     }
 
     private static Field[] getClassFields(Class<?> clazz) {
-        if(fieldCache.containsKey(clazz))
+        if (fieldCache.containsKey(clazz))
             return fieldCache.get(clazz);
         else {
             Field[] fields = clazz.getFields();
@@ -99,17 +94,17 @@ public final class MessageSerializer {
 
     private static Pair<Reader, Writer> getHandler(Class<?> clazz) {
         Pair<Reader, Writer> pair = handlers.get(clazz);
-        if(pair == null)
+        if (pair == null)
             throw new RuntimeException("No R/W handler for  " + clazz);
         return pair;
     }
 
     private static boolean acceptField(Field f, Class<?> type) {
         int mods = f.getModifiers();
-        if(Modifier.isFinal(mods) || Modifier.isStatic(mods) || Modifier.isTransient(mods))
+        if (Modifier.isFinal(mods) || Modifier.isStatic(mods) || Modifier.isTransient(mods))
             return false;
 
-        return  handlers.containsKey(type);
+        return handlers.containsKey(type);
     }
 
     private static <T> void mapFunctions(Class<T> type, Function<FriendlyByteBuf, T> readerLower, BiConsumer<FriendlyByteBuf, T> writerLower) {
@@ -135,7 +130,7 @@ public final class MessageSerializer {
             int count = buf.readInt();
             T[] arr = (T[]) Array.newInstance(type, count);
 
-            for(int i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
                 arr[i] = reader.read(buf, field);
 
             return arr;
@@ -145,7 +140,7 @@ public final class MessageSerializer {
             int count = t.length;
             buf.writeInt(count);
 
-            for(int i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
                 writer.write(buf, field, t[i]);
         };
 

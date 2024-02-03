@@ -17,25 +17,25 @@ import org.apache.logging.log4j.Logger;
 
 @Mod("showcaseitem")
 public class ShowcaseItem {
-	public static final String MOD_ID = "showcaseitem";
-	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
+    public static final String MOD_ID = "showcaseitem";
+    public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
-	public ShowcaseItem() {
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.common_config);
-		Config.loadConfig(Config.common_config, FMLPaths.CONFIGDIR.get().resolve("showcaseitem-common.toml").toString());
+    public ShowcaseItem() {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.common_config);
+        Config.loadConfig(Config.common_config, FMLPaths.CONFIGDIR.get().resolve("showcaseitem-common.toml").toString());
 
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> FMLJavaModLoadingContext.get().getModEventBus().addListener(ShowcaseItem::registerKeyBinding));
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> FMLJavaModLoadingContext.get().getModEventBus().addListener(ShowcaseItem::registerKeyBinding));
 
-		MinecraftForge.EVENT_BUS.register(this);
-	}
+        MinecraftForge.EVENT_BUS.register(this);
+    }
 
-	public void setup(FMLCommonSetupEvent event) {
-		ShowcaseItemNetwork.setup();
-	}
+    public void setup(FMLCommonSetupEvent event) {
+        ShowcaseItemNetwork.setup();
+    }
 
-	public static void registerKeyBinding(RegisterKeyMappingsEvent event) {
-		event.register(ModKeyBindings.SHOWCASE_ITEM);
-	}
+    public static void registerKeyBinding(RegisterKeyMappingsEvent event) {
+        event.register(ModKeyBindings.SHOWCASE_ITEM);
+    }
 }
