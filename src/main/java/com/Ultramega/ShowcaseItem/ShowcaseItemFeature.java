@@ -149,6 +149,7 @@ public class ShowcaseItemFeature {
             //Fix y-shift if overflowingbars is installed
             if (ModList.get().isLoaded("overflowingbars")) {
                 y += Minecraft.getInstance().player.getAbsorptionAmount() > 10.0F ? 10 : 0;
+                y += Minecraft.getInstance().player.getArmorValue() > 0.5F ? 10 : 0;
             }
 
             if (a > 0) {
