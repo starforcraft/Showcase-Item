@@ -1,8 +1,8 @@
 {
 	"required": true,
+	"minVersion": "0.8.3",
 	"package": "com.ultramega.showcaseitem.mixin",
-	"compatibilityLevel": "JAVA_8",
-	"refmap": "showcaseitem.refmap.json",
+	"compatibilityLevel": "JAVA_21",
 	"mixins": [
 		"ItemStackMixin"
 	],
@@ -13,6 +13,5 @@
 	],
 	"injectors": {
 		"defaultRequire": 1
-	},
-	"minVersion": "0.8"
+	}
 }

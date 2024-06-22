@@ -1,29 +1,25 @@
 package com.ultramega.showcaseitem.config;
 
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.electronwill.nightconfig.core.io.WritingMode;
 import com.ultramega.showcaseitem.ShowcaseItem;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
-import java.io.File;
-
-@Mod.EventBusSubscriber
+@EventBusSubscriber(modid = ShowcaseItem.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class Config {
-    private static final ForgeConfigSpec.Builder common_builder = new ForgeConfigSpec.Builder();
-    public static final ForgeConfigSpec common_config;
+    private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
-    static {
-        ShowcaseItemConfig.init(common_builder);
-        common_config = common_builder.build();
-    }
+    private static final ModConfigSpec.BooleanValue RENDER_ITEMS_IN_CHAT = BUILDER
+            .comment("Render items in chat")
+            .define("renderItemsInChat", true);
 
-    public static void loadConfig(ForgeConfigSpec config, String path) {
-        ShowcaseItem.LOGGER.info("Loading config: " + path);
-        final CommentedFileConfig file = CommentedFileConfig.builder(new File(path)).sync().autosave().writingMode(WritingMode.REPLACE).build();
-        ShowcaseItem.LOGGER.info("Built config: " + path);
-        file.load();
-        ShowcaseItem.LOGGER.info("Loaded config: " + path);
-        config.setConfig(file);
+    public static final ModConfigSpec SPEC = BUILDER.build();
+
+    public static boolean renderItemsInChat;
+
+    @SubscribeEvent
+    static void onLoad(final ModConfigEvent event) {
+        renderItemsInChat = RENDER_ITEMS_IN_CHAT.get();
     }
 }

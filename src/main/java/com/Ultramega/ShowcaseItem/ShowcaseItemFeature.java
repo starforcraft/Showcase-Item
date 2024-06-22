@@ -3,9 +3,8 @@ package com.ultramega.showcaseitem;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.ultramega.showcaseitem.config.ShowcaseItemConfig;
-import com.ultramega.showcaseitem.message.ShareItemMessage;
-import com.ultramega.showcaseitem.message.ShowcaseItemNetwork;
+import com.ultramega.showcaseitem.config.Config;
+import com.ultramega.showcaseitem.network.ShareItemData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -21,17 +20,18 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.client.settings.KeyModifier;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.client.settings.KeyModifier;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = ShowcaseItem.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+@EventBusSubscriber(modid = ShowcaseItem.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ShowcaseItemFeature {
     public static float alphaValue = 1F;
 
@@ -39,7 +39,7 @@ public class ShowcaseItemFeature {
 
     @OnlyIn(Dist.CLIENT)
     public static void renderItemForMessage(GuiGraphics guiGraphics, FormattedCharSequence sequence, float x, float y, int color) {
-        if (!ShowcaseItemConfig.RENDER_ITEMS_IN_CHAT.get())
+        if (!Config.renderItemsInChat)
             return;
 
         Minecraft mc = Minecraft.getInstance();
@@ -89,8 +89,7 @@ public class ShowcaseItemFeature {
                         lastShadeTimestamp = mc.level.getGameTime();
                     } else return;
 
-                    ShareItemMessage message = new ShareItemMessage(slot.index, gui.getMenu().containerId);
-                    ShowcaseItemNetwork.sendToServer(message);
+                    PacketDistributor.sendToServer(new ShareItemData(slot.index, gui.getMenu().containerId));
                 }
             }
         }
@@ -113,7 +112,7 @@ public class ShowcaseItemFeature {
     }
 
     public static MutableComponent createStackComponent(ItemStack stack, MutableComponent component) {
-        if (!ShowcaseItemConfig.RENDER_ITEMS_IN_CHAT.get())
+        if (!Config.renderItemsInChat)
             return component;
 
         Style style = component.getStyle();
@@ -157,7 +156,7 @@ public class ShowcaseItemFeature {
 
                 guiGraphics.pose().pushPose();
 
-                guiGraphics.pose().mulPoseMatrix(pose.last().pose());
+                guiGraphics.pose().mulPose(pose.last().pose());
 
                 guiGraphics.pose().translate(shift + x, y, 0);
                 guiGraphics.pose().scale(0.5f, 0.5f, 0.5f);
