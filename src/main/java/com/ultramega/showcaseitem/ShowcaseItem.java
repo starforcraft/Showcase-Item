@@ -12,13 +12,10 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 @Mod(ShowcaseItem.MODID)
 public class ShowcaseItem {
     public static final String MODID = "showcaseitem";
-    public static final Logger LOGGER = LogManager.getLogger(MODID);
 
     public ShowcaseItem(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener((RegisterPayloadHandlersEvent event) -> {

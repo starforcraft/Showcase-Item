@@ -145,7 +145,7 @@ public class ShowcaseItemFeature {
 
             float shift = mc.font.width(before) + extraShift;
 
-            //Fix y-shift if overflowingbars is installed
+            // Fix y-shift if overflowingbars is installed
             if (ModList.get().isLoaded("overflowingbars")) {
                 y += Minecraft.getInstance().player.getAbsorptionAmount() > 10.0F ? 10 : 0;
                 y += Minecraft.getInstance().player.getArmorValue() > 0.5F ? 10 : 0;
