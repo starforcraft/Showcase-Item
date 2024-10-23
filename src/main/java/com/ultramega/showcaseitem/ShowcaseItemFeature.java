@@ -1,7 +1,6 @@
 package com.ultramega.showcaseitem;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultramega.showcaseitem.config.Config;
 import com.ultramega.showcaseitem.network.ShareItemData;
@@ -162,8 +161,6 @@ public class ShowcaseItemFeature {
                 guiGraphics.pose().scale(0.5f, 0.5f, 0.5f);
                 guiGraphics.renderItem(stack, 0, 0);
                 guiGraphics.pose().popPose();
-
-                RenderSystem.applyModelViewMatrix();
 
                 alphaValue = 1F;
             }
