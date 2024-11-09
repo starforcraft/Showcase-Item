@@ -87,7 +87,8 @@ public class ShowcaseItemFeature {
                 if (!stack.isEmpty()) {
                     if (mc.level != null && mc.level.getGameTime() - lastShadeTimestamp > 10) {
                         lastShadeTimestamp = mc.level.getGameTime();
-                    } else return;
+                    } else
+                        return;
 
                     PacketDistributor.sendToServer(new ShareItemData(slot.index, gui.getMenu().containerId));
                 }
@@ -141,7 +142,7 @@ public class ShowcaseItemFeature {
             ItemStack stack = contents != null ? contents.getItemStack() : ItemStack.EMPTY;
 
             if (stack.isEmpty())
-                stack = new ItemStack(Blocks.BARRIER); //For invalid icon
+                stack = new ItemStack(Blocks.BARRIER); // For invalid icon
 
             float shift = mc.font.width(before) + extraShift;
 

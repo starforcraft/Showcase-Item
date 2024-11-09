@@ -29,7 +29,7 @@ public record ShareItemData(int slot, int containerId) implements CustomPacketPa
     public void handle(final IPayloadContext context) {
         context.enqueueWork(() -> {
             Player player = context.player();
-            if(player instanceof ServerPlayer serverPlayer) {
+            if (player instanceof ServerPlayer serverPlayer) {
                 ShowcaseItemFeature.shareItem(serverPlayer, slot, containerId);
             }
         }).exceptionally(e -> null);
