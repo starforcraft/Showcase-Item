@@ -13,6 +13,12 @@ group = mod_group_id
 
 repositories {
     mavenLocal()
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 base {

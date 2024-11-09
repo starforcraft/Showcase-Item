@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import static net.minecraft.client.renderer.ItemBlockRenderTypes.getChunkRenderType;
 
 @Mixin(ItemBlockRenderTypes.class)
-public class ItemBlockRenderTypesMixin {
+public abstract class ItemBlockRenderTypesMixin {
     @Inject(method = "getRenderType(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/client/renderer/RenderType;", at = @At("HEAD"), cancellable = true)
     private static void overrideRenderType(BlockState state, CallbackInfoReturnable<RenderType> cir) {
         if (ShowcaseItemFeature.alphaValue != 1.0F) {
