@@ -17,6 +17,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
@@ -62,6 +63,8 @@ public class ShowcaseItemFeature {
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public static void keyboardEvent(ScreenEvent.KeyPressed.Pre event) {
+        if (ModKeyBindings.SHOWCASE_ITEM.isUnbound()) return;
+
         Minecraft mc = Minecraft.getInstance();
         if (InputConstants.isKeyDown(mc.getWindow().getWindow(), ModKeyBindings.SHOWCASE_ITEM.getKey().getValue()) && keyModifierPressed(mc)) {
             keyPressed();
@@ -148,8 +151,11 @@ public class ShowcaseItemFeature {
 
             // Fix y-shift if overflowingbars is installed
             if (ModList.get().isLoaded("overflowingbars")) {
-                y += Minecraft.getInstance().player.getAbsorptionAmount() > 10.0F ? 10 : 0;
-                y += Minecraft.getInstance().player.getArmorValue() > 0.5F ? 10 : 0;
+                Player player = Minecraft.getInstance().player;
+                if (player != null) {
+                    y += player.getAbsorptionAmount() > 10.0F ? 10 : 0;
+                    y += player.getArmorValue() > 0.5F ? 10 : 0;
+                }
             }
 
             if (a > 0) {
