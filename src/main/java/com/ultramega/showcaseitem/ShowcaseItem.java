@@ -20,7 +20,11 @@ public class ShowcaseItem {
     public ShowcaseItem(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener((RegisterPayloadHandlersEvent event) -> {
             PayloadRegistrar registrar = event.registrar(MODID);
-            registrar.playBidirectional(ShareItemData.TYPE, ShareItemData.STREAM_CODEC, ShareItemData::handle);
+            registrar.playToServer(
+                ShareItemData.TYPE,
+                ShareItemData.STREAM_CODEC,
+                ShareItemData::handle
+            );
         });
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);

@@ -1,15 +1,19 @@
 package com.ultramega.showcaseitem;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultramega.showcaseitem.config.Config;
 import com.ultramega.showcaseitem.network.ShareItemData;
+
+import java.util.List;
+
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
@@ -17,6 +21,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
@@ -28,8 +33,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.settings.KeyModifier;
 import net.neoforged.neoforge.network.PacketDistributor;
-
-import java.util.List;
 
 @EventBusSubscriber(modid = ShowcaseItem.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ShowcaseItemFeature {
@@ -92,24 +95,31 @@ public class ShowcaseItemFeature {
                     } else
                         return;
 
-                    PacketDistributor.sendToServer(new ShareItemData(slot.index, gui.getMenu().containerId));
+                    PacketDistributor.sendToServer(new ShareItemData(slot.getSlotIndex(), gui.getMenu().containerId));
                 }
             }
         }
     }
 
-    public static void shareItem(ServerPlayer player, int slot, int containedId) {
-        if (player.containerMenu.containerId == containedId) {
-            var slots = player.containerMenu.slots;
-            if (slot >= 0 && slots.size() > slot) {
-                ItemStack stack = slots.get(slot).getItem();
-                if (!stack.isEmpty()) {
-                    MutableComponent comp = Component.translatable("showcaseitem.misc.shared_item", player.getName());
-                    Component itemComp = stack.getDisplayName();
+    public static void shareItem(ServerPlayer player, int slotIndex, int containerId) {
+        if (player.containerMenu.containerId != containerId) return;
 
-                    comp.append(itemComp);
-                    player.server.getPlayerList().getPlayers().forEach(p -> p.sendSystemMessage(comp));
-                }
+        NonNullList<Slot> slots = player.containerMenu.slots;
+        if (slotIndex >= 0 && slots.size() > slotIndex) {
+            ItemStack stack;
+            // Creative menu support
+            if (player.containerMenu instanceof InventoryMenu) {
+                stack = player.getInventory().getItem(slotIndex);
+            } else {
+                Slot slot = slots.get(slotIndex);
+                stack = slot.getItem();
+            }
+            if (!stack.isEmpty()) {
+                MutableComponent message = Component
+                    .translatable("showcaseitem.misc.shared_item", player.getName())
+                    .append(stack.getDisplayName());
+
+                player.server.getPlayerList().getPlayers().forEach(p -> p.sendSystemMessage(message));
             }
         }
     }
@@ -132,10 +142,8 @@ public class ShowcaseItemFeature {
     }
 
     @OnlyIn(Dist.CLIENT)
-    private static void render(Minecraft mc, GuiGraphics guiGraphics, String before, float extraShift, float x, float y, Style style, int color) {
+    private static void render(Minecraft mc, GuiGraphics graphics, String before, float extraShift, float x, float y, Style style, int color) {
         float a = (color >> 24 & 255) / 255.0F;
-
-        PoseStack pose = guiGraphics.pose();
 
         HoverEvent hoverEvent = style.getHoverEvent();
         if (hoverEvent != null && hoverEvent.getAction() == HoverEvent.Action.SHOW_ITEM) {
@@ -160,14 +168,15 @@ public class ShowcaseItemFeature {
             if (a > 0) {
                 alphaValue = a;
 
-                guiGraphics.pose().pushPose();
+                PoseStack pose = graphics.pose();
+                pose.pushPose();
 
-                guiGraphics.pose().mulPose(pose.last().pose());
+                pose.translate(shift + x + (mc.font.width("  ")) / 2.0f, y, 0);
+                pose.scale(0.5f, 0.5f, 0.5f);
 
-                guiGraphics.pose().translate(shift + x, y, 0);
-                guiGraphics.pose().scale(0.5f, 0.5f, 0.5f);
-                guiGraphics.renderItem(stack, 0, 0);
-                guiGraphics.pose().popPose();
+                graphics.renderItem(stack, 0, 0);
+
+                pose.popPose();
 
                 alphaValue = 1F;
             }
