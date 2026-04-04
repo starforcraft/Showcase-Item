@@ -27,11 +27,7 @@ public class GuiRendererMixin {
 
     @Inject(method = "submitBlitFromItemAtlas", at = @At("HEAD"), cancellable = true, remap = false)
     private void submitBlitFromItemAtlas(final GuiItemRenderState itemState, final SlotView slotView, final CallbackInfo ci) {
-        if (!(itemState.itemStackRenderState() instanceof AlphaItemStackRenderState alphaItemStackRenderState)) {
-            return;
-        }
-
-        final float alpha = alphaItemStackRenderState.showcaseitem$getAlpha();
+        final float alpha = ((AlphaItemStackRenderState) itemState.itemStackRenderState()).showcaseitem$getAlpha();
         if (alpha >= 1.0f) {
             return;
         }
