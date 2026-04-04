@@ -4,12 +4,15 @@
 	"package": "com.ultramega.showcaseitem.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"ItemStackMixin"
+		"ItemStackMixin",
+		"AccessorServerPlayer"
 	],
 	"client": [
-		"client.ItemRendererMixin",
 		"client.ChatComponentMixin",
-		"client.ItemBlockRenderTypesMixin"
+		"client.ChatComponentMixin2",
+		"client.GuiRendererMixin",
+		"client.AccessorGuiGraphicsExtractor",
+		"client.ItemStackRenderStateMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

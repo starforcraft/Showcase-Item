@@ -1,0 +1,5 @@
+@ParametersAreNonnullByDefault
+@FieldsAndMethodsAreNonnullByDefault
+package com.ultramega.showcaseitem.interfaces;
+
+import javax.annotation.ParametersAreNonnullByDefault;

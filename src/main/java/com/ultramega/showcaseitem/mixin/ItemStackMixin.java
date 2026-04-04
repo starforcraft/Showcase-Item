@@ -1,6 +1,7 @@
 package com.ultramega.showcaseitem.mixin;
 
-import com.ultramega.showcaseitem.ShowcaseItemFeature;
+import com.ultramega.showcaseitem.ShowcaseItemFeatureClient;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
@@ -12,7 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ItemStack.class)
 public class ItemStackMixin {
     @Inject(method = "getDisplayName", at = @At("RETURN"), cancellable = true)
-    private void getHoverName(CallbackInfoReturnable<Component> callbackInfoReturnable) {
-        callbackInfoReturnable.setReturnValue(ShowcaseItemFeature.createStackComponent((ItemStack) (Object) this, (MutableComponent) callbackInfoReturnable.getReturnValue()));
+    private void getHoverName(final CallbackInfoReturnable<Component> callbackInfoReturnable) {
+        callbackInfoReturnable.setReturnValue(
+            ShowcaseItemFeatureClient.createStackComponent((ItemStack) (Object) this, (MutableComponent) callbackInfoReturnable.getReturnValue()));
     }
 }

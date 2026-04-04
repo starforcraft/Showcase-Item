@@ -1,20 +1,25 @@
 package com.ultramega.showcaseitem.mixin.client;
 
-import com.ultramega.showcaseitem.ShowcaseItemFeature;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import com.ultramega.showcaseitem.ShowcaseItemFeatureClient;
+
+import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ChatComponent;
-import net.minecraft.util.FormattedCharSequence;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value = ChatComponent.class)
+@Mixin(ChatComponent.class)
 public abstract class ChatComponentMixin {
-    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Lnet/minecraft/util/FormattedCharSequence;III)I"))
-    private int showcaseItem$drawItems(GuiGraphics graphics, Font font, FormattedCharSequence formattedCharSequence, int x, int y, int color) {
-        ShowcaseItemFeature.renderItemForMessage(graphics, formattedCharSequence, x, y, color);
+    @Inject(method = "extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;"
+        + "IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V", at = @At("HEAD"))
+    private static void chatheads$captureGuiGraphics(final CallbackInfo ci, final @Local(argsOnly = true) GuiGraphicsExtractor graphics) {
+        ShowcaseItemFeatureClient.graphics = graphics;
+    }
 
-        return graphics.drawString(font, formattedCharSequence, x, y, color);
+    @Inject(method = "captureClickableText", at = @At("HEAD"))
+    private static void chatheads$noGraphics(final CallbackInfo ci) {
+        ShowcaseItemFeatureClient.graphics = null;
     }
 }
