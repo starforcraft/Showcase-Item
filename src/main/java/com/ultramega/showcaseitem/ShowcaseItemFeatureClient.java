@@ -20,9 +20,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.item.TrackingItemStackRenderState;
 import net.minecraft.client.renderer.state.gui.GuiItemRenderState;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.LivingEntity;
@@ -43,6 +41,7 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.client.settings.KeyModifier;
 import org.joml.Matrix3x2f;
 import org.joml.Matrix3x2fStack;
+import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(modid = ShowcaseItem.MODID, value = Dist.CLIENT)
 public class ShowcaseItemFeatureClient {
@@ -115,23 +114,6 @@ public class ShowcaseItemFeatureClient {
                 }
             }
         }
-    }
-
-    public static MutableComponent createStackComponent(final ItemStack stack, final MutableComponent component) {
-        if (!Config.renderItemsInChat) {
-            return component;
-        }
-
-        Style style = component.getStyle();
-        if (stack.getCount() > 64) {
-            final ItemStackTemplate copyStack = ItemStackTemplate.fromNonEmptyStack(stack.copy()).withCount(64);
-            style = style.withHoverEvent(new HoverEvent.ShowItem(copyStack));
-            component.withStyle(style);
-        }
-
-        final MutableComponent out = Component.literal("   ");
-        out.setStyle(style);
-        return out.append(component);
     }
 
     private static void render(final Minecraft mc,
@@ -210,13 +192,13 @@ public class ShowcaseItemFeatureClient {
 
     // TODO: I don't like the code below at all
     private static boolean keyModifierPressed(final Minecraft mc) {
-        final int keyModifierInt = checkLeftKeyModifier();
-        final int keyModifierInt2 = checkRightKeyModifier();
+        final int leftKeyModifier = checkLeftKeyModifier();
+        final int rightKeyModifier = checkRightKeyModifier();
 
-        if (keyModifierInt != -1) {
-            return InputConstants.isKeyDown(mc.getWindow(), keyModifierInt);
-        } else if (keyModifierInt2 != -1) {
-            return InputConstants.isKeyDown(mc.getWindow(), keyModifierInt2);
+        if (leftKeyModifier != -1) {
+            return InputConstants.isKeyDown(mc.getWindow(), leftKeyModifier);
+        } else if (rightKeyModifier != -1) {
+            return InputConstants.isKeyDown(mc.getWindow(), rightKeyModifier);
         }
 
         return true;
@@ -224,27 +206,27 @@ public class ShowcaseItemFeatureClient {
 
     private static int checkLeftKeyModifier() {
         final KeyModifier keyModifier = ModKeyBindings.SHOWCASE_ITEM_KEY.getKeyModifier();
-        int keyModifierInt = -1;
+        int keyModifierKey = -1;
         if (keyModifier.equals(KeyModifier.CONTROL)) {
-            keyModifierInt = 341;
+            keyModifierKey = GLFW.GLFW_KEY_LEFT_CONTROL;
         } else if (keyModifier.equals(KeyModifier.ALT)) {
-            keyModifierInt = 342;
+            keyModifierKey = GLFW.GLFW_KEY_LEFT_ALT;
         } else if (keyModifier.equals(KeyModifier.SHIFT)) {
-            keyModifierInt = 340;
+            keyModifierKey = GLFW.GLFW_KEY_LEFT_SHIFT;
         }
-        return keyModifierInt;
+        return keyModifierKey;
     }
 
     private static int checkRightKeyModifier() {
         final KeyModifier keyModifier = ModKeyBindings.SHOWCASE_ITEM_KEY.getKeyModifier();
-        int keyModifierInt = -1;
+        int keyModifierKey = -1;
         if (keyModifier.equals(KeyModifier.CONTROL)) {
-            keyModifierInt = 345;
+            keyModifierKey = GLFW.GLFW_KEY_RIGHT_CONTROL;
         } else if (keyModifier.equals(KeyModifier.ALT)) {
-            keyModifierInt = 346;
+            keyModifierKey = GLFW.GLFW_KEY_RIGHT_ALT;
         } else if (keyModifier.equals(KeyModifier.SHIFT)) {
-            keyModifierInt = 344;
+            keyModifierKey = GLFW.GLFW_KEY_RIGHT_SHIFT;
         }
-        return keyModifierInt;
+        return keyModifierKey;
     }
 }

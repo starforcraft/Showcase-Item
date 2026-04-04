@@ -16,9 +16,9 @@ public record ShareItemData(int slot, int containerId) implements CustomPacketPa
     public static final Type<ShareItemData> TYPE = new Type<>(Identifier.fromNamespaceAndPath(ShowcaseItem.MODID, "share_item_data"));
 
     public static final StreamCodec<ByteBuf, ShareItemData> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT, ShareItemData::slot,
-            ByteBufCodecs.INT, ShareItemData::containerId,
-            ShareItemData::new
+        ByteBufCodecs.INT, ShareItemData::slot,
+        ByteBufCodecs.INT, ShareItemData::containerId,
+        ShareItemData::new
     );
 
     @Override
