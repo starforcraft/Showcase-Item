@@ -34,7 +34,7 @@ public class ShowcaseItemFeatureServer {
             }
             if (!stack.isEmpty()) {
                 final MutableComponent message = Component
-                    .translatable("showcaseitem.misc.shared_item", "asd")
+                    .translatable("showcaseitem.misc.shared_item", player.getName())
                     .append(stack.getDisplayName());
 
                 ((AccessorServerPlayer) player).showcaseitem$getServer().getPlayerList().getPlayers().forEach(p -> {
